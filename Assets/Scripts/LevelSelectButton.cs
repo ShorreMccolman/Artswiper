@@ -9,8 +9,8 @@ public class LevelSelectButton : GenericMenuButton {
 	public Image featureImage;
 	public Image lockImage;
 	public GameObject ribbon;
-	[HideInInspector]
-	public Map levelMap;
+
+	Map levelMap;
 	bool isUnlocked;
 
 	public void Init(Map map)

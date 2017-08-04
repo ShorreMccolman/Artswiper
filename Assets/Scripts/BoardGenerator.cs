@@ -33,8 +33,8 @@ public class BoardGenerator : MonoBehaviour {
 	{
 		// Auto win
 		if (Input.GetKeyDown (KeyCode.W)) {
-			HUD.Instance.running = false;
-			GameController.Instance.currentState.victory = true;
+			HUD.Running = false;
+			GameController.CurrentState.SetVictory (true);
 			BoardGenerator.Instance.FlipBoard ();
 			MenuController.OpenMenu (EndgamePopup.Instance);
 		}

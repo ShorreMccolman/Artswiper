@@ -110,7 +110,7 @@ public class LevelMenu : Menu {
 
 	public void SelectLevel(Map map)
 	{
-		GameController.Instance.StartAdventureGame (currentWorld, map);
+		GameController.StartAdventureGame (currentWorld, map);
 	}
 
 	public void GoBack()

@@ -20,7 +20,7 @@ public class SettingsPopup : Menu {
 		musicVolSlider.value = GameSettings.MusicVolume;
 		hintCheckmark.enabled = GameSettings.ShowHint;
 
-		quitButton.SetActive (GameController.Instance.currentState.currentMode != GameMode.None);
+		quitButton.SetActive (GameController.CurrentState.currentMode != GameMode.None);
 	}
 
 	protected override void OnClose() {
@@ -42,7 +42,7 @@ public class SettingsPopup : Menu {
 	}
 
 	public void QuitToMain() {
-		HUD.Instance.running = false;
+		HUD.Running = false;
 		MenuController.OpenMenu (MainMenu.Instance);
 	}
 

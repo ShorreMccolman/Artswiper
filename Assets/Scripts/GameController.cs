@@ -36,6 +36,36 @@ public struct GameState {
 		mislocatedBombs = 0;
 		victory = false;
 	}
+
+	public void SetVictory(bool isVict)
+	{
+		victory = isVict;
+	}
+
+	public void SetMode(GameMode mode)
+	{
+		currentMode = mode;
+	}
+
+	public void ModifyRemainingFlags(int change)
+	{
+		remainingFlags += change;
+	}
+
+	public void ModifyRemainingBombs(int change)
+	{
+		remainingBombs += change;
+	}
+
+	public void ModifyLocatedBombs(int change)
+	{
+		locatedBombs += change;
+	}
+
+	public void ModifyMislocatedBombs(int change)
+	{
+		mislocatedBombs += change;
+	}
 }
 
 public class GameController : MonoBehaviour {
@@ -43,37 +73,55 @@ public class GameController : MonoBehaviour {
 	void Awake()
 	{Instance = this;}
 
-	public GameState currentState;
-	public Board currentBoard;
-	public World currentWorld;
-	Map mapToLoad;
-
-	public void CompleteLevel(int score)
+	private GameState currentState;
+	public static GameState CurrentState
 	{
-		PlayerProgression.CompleteLevel (currentBoard.map.name, score);
+		get{return Instance.currentState;}
+		set{Instance.currentState = value;}
 	}
 
-	public void RestartCurrentBoard()
+	private Board currentBoard;
+	public static Board CurrentBoard
 	{
-		if(currentState.currentMode == GameMode.Classic) {
-			StartClassicGame (currentBoard.map.name);
-		} else if (currentState.currentMode == GameMode.Adventure) {
-			StartAdventureGame (currentWorld, currentBoard.map);
+		get{return Instance.currentBoard;}
+		set{Instance.currentBoard = value;}
+	}
+
+	private World currentWorld;
+	public static World CurrentWorld
+	{
+		get{return Instance.currentWorld;}
+		set{Instance.currentWorld = value;}
+	}
+
+	static Map mapToLoad;
+
+	public static void CompleteLevel(int score)
+	{
+		PlayerProgression.CompleteLevel (CurrentBoard.map.name, score);
+	}
+
+	public static void RestartCurrentBoard()
+	{
+		if(CurrentState.currentMode == GameMode.Classic) {
+			StartClassicGame (CurrentBoard.map.name);
+		} else if (CurrentState.currentMode == GameMode.Adventure) {
+			StartAdventureGame (CurrentWorld, CurrentBoard.map);
 		}
 	}
 
-	public void StartClassicGame(string level = "easy")
+	public static void StartClassicGame(string level = "easy")
 	{
 		mapToLoad = Map.LoadMap(level);
-		currentWorld = new World ();
-		StartCoroutine (StartGameSequence (GameMode.Classic));
+		CurrentWorld = new World ();
+		Instance.StartCoroutine (Instance.StartGameSequence (GameMode.Classic));
 	}
 
-	public void StartAdventureGame(World world, Map map)
+	public static void StartAdventureGame(World world, Map map)
 	{
 		mapToLoad = map;
-		currentWorld = world;
-		StartCoroutine (StartGameSequence (GameMode.Adventure));
+		CurrentWorld = world;
+		Instance.StartCoroutine (Instance.StartGameSequence (GameMode.Adventure));
 	}
 	IEnumerator StartGameSequence(GameMode mode)
 	{
@@ -91,50 +139,49 @@ public class GameController : MonoBehaviour {
 		HUD.Instance.StartGame (currentWorld);
 	}
 
-	public void StartNextAdventureGame()
+	public static void StartNextAdventureGame()
 	{
 		MenuController.CloseAll ();
-		if(currentWorld.maps.Length > currentBoard.map.currentIndex + 1) {
-			mapToLoad = currentWorld.maps [currentBoard.map.currentIndex + 1];
-			//Debug.LogError ("Name: " + mapToLoad.name + " INDEX: " + currentBoard.map.currentIndex);
-			StartCoroutine (StartGameSequence (GameMode.Adventure));
+		if(CurrentWorld.maps.Length > CurrentBoard.map.currentIndex + 1) {
+			mapToLoad = CurrentWorld.maps [CurrentBoard.map.currentIndex + 1];
+			Instance.StartCoroutine (Instance.StartGameSequence (GameMode.Adventure));
 		}
 	}
 
-	public bool IsFinalLevel()
+	public static bool IsFinalLevel()
 	{
-		return currentBoard.map.isFinalLevel;
+		return CurrentBoard.map.isFinalLevel;
 	}
 
-	public void Timeout()
+	public static void Timeout()
 	{
-		HUD.Instance.running = false;
+		HUD.Running = false;
 		BoardGenerator.Instance.FlipBoard ();
 		MenuController.OpenMenu (EndgamePopup.Instance);
 	}
 
-	public void FlagSpace(bool flagOn, bool hasBomb)
+	public static void FlagSpace(bool flagOn, bool hasBomb)
 	{
 		int sign = flagOn ? 1 : -1;
 
-		currentState.remainingFlags += -1 * sign;
+		CurrentState.ModifyRemainingFlags(-1 * sign);
 		if(hasBomb) {
-			currentState.locatedBombs += 1 * sign;
-			currentState.remainingBombs += -1 * sign;
+			CurrentState.ModifyLocatedBombs(1 * sign);
+			CurrentState.ModifyRemainingBombs(-1 * sign);
 		} else {
-			currentState.mislocatedBombs += 1 * sign;
+			CurrentState.ModifyMislocatedBombs(1 * sign);
 		}
-		HUD.Instance.UpdateRemaining (currentState.remainingFlags);
+		HUD.Instance.UpdateRemaining (CurrentState.remainingFlags);
 	}
 
-	public void HitBomb()
+	public static void HitBomb()
 	{
-		StartCoroutine (EndGameSequence ());
+		Instance.StartCoroutine (Instance.EndGameSequence ());
 	}
 
 	IEnumerator EndGameSequence()
 	{
-		HUD.Instance.running = false;
+		HUD.Running = false;
 		SoundController.PauseMusic ();
 		yield return new WaitForSeconds (0.7f);
 		SoundController.PlaySoundEffect (Sounds.ALARM);
@@ -142,24 +189,24 @@ public class GameController : MonoBehaviour {
 		ShowEndGame ();
 	}
 
-	public void ShowEndGame()
+	public static void ShowEndGame()
 	{
 		SoundController.UnPauseMusic ();
 		MenuController.OpenMenu (EndgamePopup.Instance);
 	}
 
-	public void FlipSafeSpace()
+	public static void FlipSafeSpace()
 	{
-		currentState.remainingSpaces--;
-		currentState.flippedSpaces++;
+		CurrentState.remainingSpaces--;
+		CurrentState.flippedSpaces++;
 
-		if(currentState.remainingSpaces <= 0 && HUD.Instance.running) {
-			HUD.Instance.running = false;
+		if(CurrentState.remainingSpaces <= 0 && HUD.Running) {
+			HUD.Running = false;
 			BoardGenerator.Instance.FlipBoard ();
-			currentState.victory = true;
+			CurrentState.SetVictory (true);
 			MenuController.OpenMenu (EndgamePopup.Instance);
 		} else {
-			if(!HUD.Instance.running) {
+			if(!HUD.Running) {
 				HUD.Instance.FlipFirst ();
 			}
 		}

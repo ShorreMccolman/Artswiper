@@ -170,7 +170,7 @@ public class Slot : MonoBehaviour {
 			SoundController.PlaySoundEffect (Sounds.HIT,true);
 
 			image.color = Color.magenta;
-			GameController.Instance.HitBomb ();
+			GameController.HitBomb ();
 			hasSent = true;
 			Invoke ("SendFlipEnd", 0.2f);
 		} else if (IsEmpty) {
@@ -196,20 +196,19 @@ public class Slot : MonoBehaviour {
 	public void Flag()
 	{
 		if(state == State.Hidden) {
-			if(GameController.Instance.currentState.remainingFlags <= 0) {
-
+			if(GameController.CurrentState.remainingFlags <= 0) {
 				return;
 			}
 
 			state = State.Flagged;
 			cover.sprite = SlotPool.Instance.FlagSprite;
-			GameController.Instance.FlagSpace (true, hasBomb);
+			GameController.FlagSpace (true, hasBomb);
 			SoundController.PlaySoundEffect (Sounds.FLAG);
 
 		} else if (state == State.Flagged) {
 			state = State.Hidden;
 			cover.sprite = Resources.Load<Sprite> ("Icons/" + texture);
-			GameController.Instance.FlagSpace (false, hasBomb);
+			GameController.FlagSpace (false, hasBomb);
 		}
 	}
 
@@ -220,7 +219,7 @@ public class Slot : MonoBehaviour {
 			cover.enabled = false;
 
 			if (!hasBomb && !end)
-				GameController.Instance.FlipSafeSpace ();
+				GameController.FlipSafeSpace ();
 
 			if (IsEmpty)
 				image.enabled = false;

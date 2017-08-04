@@ -14,7 +14,12 @@ public class HUD : MonoBehaviour {
 	public Text remainingLabel;
 	public Text time;
 
-	public bool running;
+	private bool running;
+	public static bool Running
+	{
+		get{return Instance.running;}
+		set{Instance.running = value;}
+	}
 
 	float startTime;
 	float endTime;
@@ -22,11 +27,16 @@ public class HUD : MonoBehaviour {
 
 	int tick;
 
-	public float finalTime;
+	private float finalTime;
+	public static float FinalTime
+	{
+		get{return Instance.finalTime;}
+		set{Instance.finalTime = value;}
+	}
 
 	public void StartGame (World world) {
 
-		int limit = GameController.Instance.currentBoard.map.timeLimit;
+		int limit = GameController.CurrentBoard.map.timeLimit;
 		usesLimit = limit > 0;
 		running = false;
 		tick = 10;
@@ -37,14 +47,14 @@ public class HUD : MonoBehaviour {
 	public void FlipFirst()
 	{
 		running = true;
-		int limit = GameController.Instance.currentBoard.map.timeLimit;
+		int limit = GameController.CurrentBoard.map.timeLimit;
 		startTime = Time.time;
 		endTime = Time.time + (float)limit;
 	}
 
 	public void RestartGame()
 	{
-		GameController.Instance.RestartCurrentBoard ();
+		GameController.RestartCurrentBoard ();
 	}
 
 	void Update () {
@@ -69,7 +79,7 @@ public class HUD : MonoBehaviour {
 				if(Time.time > endTime) {
 					running = false;
 					time.text = "00:00:00";
-					GameController.Instance.Timeout ();
+					GameController.Timeout ();
 				}
 			} else {
 				finalTime = Time.time - startTime;

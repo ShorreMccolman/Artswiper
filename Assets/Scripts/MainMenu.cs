@@ -9,7 +9,7 @@ public class MainMenu : Menu {
 
 	protected override void OnOpen()
 	{
-		GameController.Instance.currentState.currentMode = GameMode.None;
+		GameController.CurrentState.SetMode(GameMode.None);
 	}
 
 	public void StartClassic()

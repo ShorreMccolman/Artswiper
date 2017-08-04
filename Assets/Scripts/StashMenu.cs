@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [System.Serializable]
-public class WorldStats
+public struct WorldStats
 {
 	public World world;
 	public Text worldLabel;

@@ -29,7 +29,7 @@ public class DifficultyPopup : Menu {
 	{
 		if (!chosen) {
 			chosen = true;
-			GameController.Instance.StartClassicGame (map);
+			GameController.StartClassicGame (map);
 		}
 	}
 		
