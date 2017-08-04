@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour {
 
 	public void StartClassicGame(string level = "easy")
 	{
-		mapToLoad = BoardGenerator.Instance.LoadMap(level);
+		mapToLoad = Map.LoadMap(level);
 		currentWorld = new World ();
 		StartCoroutine (StartGameSequence (GameMode.Classic));
 	}
@@ -81,7 +81,7 @@ public class GameController : MonoBehaviour {
 		yield return new WaitForSeconds (1.0f);
 		float time = Time.time;
 
-		MenuController.Instance.CloseAll ();
+		MenuController.CloseAll ();
 		currentBoard = BoardGenerator.Instance.CreateBoardFromMap(mapToLoad);
 		currentState = new GameState (mode, currentBoard);
 		while( Time.time - time < 1.0f)
@@ -93,7 +93,7 @@ public class GameController : MonoBehaviour {
 
 	public void StartNextAdventureGame()
 	{
-		MenuController.Instance.CloseAll ();
+		MenuController.CloseAll ();
 		if(currentWorld.maps.Length > currentBoard.map.currentIndex + 1) {
 			mapToLoad = currentWorld.maps [currentBoard.map.currentIndex + 1];
 			//Debug.LogError ("Name: " + mapToLoad.name + " INDEX: " + currentBoard.map.currentIndex);
@@ -110,7 +110,7 @@ public class GameController : MonoBehaviour {
 	{
 		HUD.Instance.running = false;
 		BoardGenerator.Instance.FlipBoard ();
-		MenuController.Instance.OpenMenu (EndgamePopup.Instance);
+		MenuController.OpenMenu (EndgamePopup.Instance);
 	}
 
 	public void FlagSpace(bool flagOn, bool hasBomb)
@@ -135,17 +135,17 @@ public class GameController : MonoBehaviour {
 	IEnumerator EndGameSequence()
 	{
 		HUD.Instance.running = false;
-		SoundController.Instance.PauseMusic ();
+		SoundController.PauseMusic ();
 		yield return new WaitForSeconds (0.7f);
-		SoundController.Instance.PlaySoundEffect (Sounds.ALARM);
+		SoundController.PlaySoundEffect (Sounds.ALARM);
 		yield return new WaitForSeconds (1.8f);
 		ShowEndGame ();
 	}
 
 	public void ShowEndGame()
 	{
-		SoundController.Instance.UnPauseMusic ();
-		MenuController.Instance.OpenMenu (EndgamePopup.Instance);
+		SoundController.UnPauseMusic ();
+		MenuController.OpenMenu (EndgamePopup.Instance);
 	}
 
 	public void FlipSafeSpace()
@@ -157,7 +157,7 @@ public class GameController : MonoBehaviour {
 			HUD.Instance.running = false;
 			BoardGenerator.Instance.FlipBoard ();
 			currentState.victory = true;
-			MenuController.Instance.OpenMenu (EndgamePopup.Instance);
+			MenuController.OpenMenu (EndgamePopup.Instance);
 		} else {
 			if(!HUD.Instance.running) {
 				HUD.Instance.FlipFirst ();

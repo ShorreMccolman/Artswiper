@@ -5,93 +5,84 @@ using UnityEngine;
 public class MenuController : MonoBehaviour {
 	public static MenuController Instance;
 	void Awake()
-	{if(Instance == null) Instance = this;}
-
-	Stack<Menu> _stack = new Stack<Menu>();
-
-	void Start() {
-		Init ();
+	{Instance = this;}
+	
+	static Stack<Menu> stack = new Stack<Menu>();
+	public static Stack<Menu> Stack
+	{
+		get { return stack; }
+	}
+		
+	public static bool IsAMenuOpen() {
+		return Stack.Count > 0;
 	}
 
-	public bool MenuOpen()
-	{return _stack.Count > 0;}
-
-	public void Init()
+	public static void OpenMenu(Menu menu, bool closePrevious = true)
 	{
-		_stack = new Stack<Menu> ();
-	}
-
-	public void ClearMenus()
-	{
-		_stack = new Stack<Menu> ();
-	}
-
-	public void OpenMenu(Menu menu, bool closePrevious = true)
-	{
-		if (_stack.Count > 0) {
-			if (_stack.Peek () == menu)
+		if (Stack.Count > 0) {
+			if (Stack.Peek () == menu)
 				return;
 
 			if (closePrevious)
-				_stack.Peek ().Close ();
+				Stack.Peek ().Close ();
 			else
-				_stack.Peek ().isOpen = false;
+				Stack.Peek ().isOpen = false;
 		}
 
-		if (_stack.Count == 0) {
+		if (Stack.Count == 0) {
 
 		}
 		
 		menu.Open ();
-		_stack.Push (menu);
+		Stack.Push (menu);
 	}
 
-	public void CloseCurrent()
+	public static void CloseCurrent()
 	{
-		if (_stack.Count == 0)
+		if (Stack.Count == 0)
 			return;
 
-		_stack.Pop ().Close ();
+		Stack.Pop ().Close ();
 
-		if (_stack.Count == 0) {
+		if (Stack.Count == 0) {
 
 		} else {
-			_stack.Peek ().Open (false);
+			Stack.Peek ().Open (false);
 		}
 	}
 
-	public void UnfocusCurrent()
+	public static void UnfocusCurrent()
 	{
-		if (_stack.Count == 0)
+		if (Stack.Count == 0)
 			return;
 
-		_stack.Pop ().Unfocus();
+		Stack.Pop ().Unfocus();
 
-		if (_stack.Count == 0) {
+		if (Stack.Count == 0) {
 
 		} else {
-			_stack.Peek ().Focus ();
+			Stack.Peek ().Focus ();
 		}
 	}
 
-	public void CloseAll()
+	public static void CloseAll()
 	{
-		if (_stack.Count == 0)
+		if (Stack.Count == 0)
 			return;
-		for( int i=0;i<_stack.Count + 1;i++) {
-			_stack.Pop ().Close ();
+		for( int i=0;i<Stack.Count + 1;i++) {
+			Stack.Pop ().Close ();
 		}
-		_stack = new Stack<Menu> ();
+		Stack.Clear ();
 	}
 		
-	public void ShakeMenu(Menu menu)
+	public static void ShakeMenu(Menu menu)
 	{
-		StartCoroutine (Shake (menu.contents));
+		Instance.StartCoroutine (Instance.Shake (menu.contents));
 	}
 
-	public void ShakeTransform(Transform trans)
+	public static void ShakeTransform(Transform trans)
 	{
-		StartCoroutine (Shake (trans));
+		Instance.StartCoroutine (Instance.Shake (trans));
 	}
 
 	IEnumerator Shake(Transform trans)

@@ -7,8 +7,8 @@ public static class PlayerProgression {
 	public const string PROFILE_CREATED = "prfl_crtd";
 
 	public const string GREETING_TITLE = "Welcome to Artswiper!";
-	public const string GREETING_MESSAGE = "The day of the big gallery heist is today but alas, a new security system has thrown a hitch in our plan. Before you can swipa a painting you will need" +
-		"to reveal the blocks covering it. Left clock on a block to reveal it but be careful, some blocks are hiding alarms! Accidently uncover one of these alarms and the score is off." +
+	public const string GREETING_MESSAGE = "The day of the big gallery heist is today but alas, a new security system has thrown a hitch in our plan. Before you can swipe a painting you will need" +
+		"to reveal the blocks covering it. Left click on a block to reveal it but be careful, some blocks are hiding alarms! Accidently uncover one of these alarms and the score is off." +
 		"\n\nI have gone ahead and marked each painting with a safe entry point but from there it will be all up to you. Blocks that have been revealed will indicate how many adjacent blocks" +
 		"contain alarms. If you think a block is hiding an alarm, you can mark it with right click. Once all of the blocks without alarms have been revealed, the painting will be yours!";
 	public const string GREETING_VIEWED = "grtng_vwd";

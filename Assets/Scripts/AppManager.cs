@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum AppState
-{
-	Init,
-	Menu,
-	Game
-}
-
 public class AppManager : MonoBehaviour {
 	public static AppManager Instance;
 	void Awake()
 	{Instance = this;}
 
-	public static AppState gamestate;
-	public static GameSettings settings;
+	[SerializeField]
+	private Image cover;
+	public bool ScreenIsCovered
+	{
+		get{ return cover.enabled; }
+	}
 
-	public Image cover;
-	public Text[] loadingTexts;
+
+	[SerializeField]
+	private Text[] loadingTexts;
 
 	void Start () {
 		StartCoroutine (LaunchApp ());
@@ -34,8 +32,8 @@ public class AppManager : MonoBehaviour {
 		SlotPool.Instance.InstantiateSlotPool ();
 		yield return null;
 
-		SoundController.Instance.StartMenuMusic ();
-		MenuController.Instance.OpenMenu (MainMenu.Instance);
+		SoundController.StartMusic ();
+		MenuController.OpenMenu (MainMenu.Instance);
 		RevealScreen ();
 
 		yield return null;
@@ -44,15 +42,13 @@ public class AppManager : MonoBehaviour {
 
 	void Init()
 	{
-		gamestate = AppState.Init;
-
 		DontDestroyOnLoad (this.gameObject);
 		ShowSplashScreen ();
 
 		if(PlayerProgression.ProfileExists()) {
-			settings = GameSettings.LoadSettings ();
+			GameSettings.LoadSettings ();
 		} else {
-			settings = GameSettings.CreateSettings ();
+			GameSettings.CreateSettings ();
 			PlayerProgression.CreateNewProfile ();
 		}
 	}
@@ -90,6 +86,7 @@ public class AppManager : MonoBehaviour {
 		CancelInvoke ();
 		Invoke ("DisableScreenCover", 2f);
 	}
+
 	void DisableScreenCover()
 	{
 		cover.enabled = false;

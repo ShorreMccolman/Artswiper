@@ -44,4 +44,10 @@ public class Map : ScriptableObject {
 		height = map.height;
 		difficulty = map.difficulty;
 	}
+
+	public static Map LoadMap(string mapID)
+	{
+		return Resources.Load ("Maps/" + mapID) as Map;
+	}
+
 }

@@ -38,7 +38,7 @@ public class StashMenu : Menu {
 
 	public void GoBack()
 	{
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 
 }

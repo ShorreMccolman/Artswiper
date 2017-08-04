@@ -2,44 +2,70 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameSettings : ScriptableObject {
-
+public class GameSettings {
 	public const string SOUND_VOLUME = "SndVlm";
 	public const string MUSIC_VOLUME = "MscVlm";
 	public const string HINT_TOGGLE = "HntTggl";
 
-	public float soundVolume;
-	public float musicVolume;
-	public bool showHint;
-
-	public static GameSettings CreateSettings()
+	private static float soundVolume;
+	public static float SoundVolume
 	{
-		GameSettings settings = new GameSettings ();
-		settings.soundVolume = 1f;
-		settings.musicVolume = 1f;
-		settings.showHint = true;
-
-		GameSettings.SaveSettings (settings);
-
-		return settings;
+		get{return soundVolume;}
+		set{
+			if (value < 0f)
+				soundVolume = 0f;
+			else if (value > 1f)
+				soundVolume = 1f;
+			else
+				soundVolume = value;
+		}
 	}
 
-	public static void SaveSettings(GameSettings settings)
+	private static float musicVolume;
+	public static float MusicVolume
 	{
-		PlayerPrefs.SetFloat (SOUND_VOLUME, settings.soundVolume);
-		PlayerPrefs.SetFloat (MUSIC_VOLUME, settings.musicVolume);
-		PlayerPrefs.SetInt (HINT_TOGGLE, settings.showHint ? 1 : 0);
+		get{return musicVolume;}
+		set{
+			if (value < 0f)
+				musicVolume = 0f;
+			else if (value > 1f)
+				musicVolume = 1f;
+			else
+				musicVolume = value;
+		}
+	}
+
+	private static bool showHint;
+	public static bool ShowHint
+	{
+		get{return showHint;}
+		set{
+			showHint = value;
+		}
+	}
+
+	public static void CreateSettings()
+	{
+		SoundVolume = 1f;
+		MusicVolume = 1f;
+		ShowHint = true;
+
+		GameSettings.SaveSettings ();
+	}
+
+	public static void SaveSettings()
+	{
+		PlayerPrefs.SetFloat (SOUND_VOLUME, SoundVolume);
+		PlayerPrefs.SetFloat (MUSIC_VOLUME, MusicVolume);
+		PlayerPrefs.SetInt (HINT_TOGGLE, ShowHint ? 1 : 0);
 
 		PlayerPrefs.Save ();
 	}
 
-	public static GameSettings LoadSettings()
+	public static void LoadSettings()
 	{
-		GameSettings settings = new GameSettings ();
-		settings.soundVolume = PlayerPrefs.GetFloat (SOUND_VOLUME, 1f);
-		settings.musicVolume = PlayerPrefs.GetFloat (MUSIC_VOLUME, 1f);;
-		settings.showHint = PlayerPrefs.GetInt (HINT_TOGGLE, 0) == 1;
-
-		return settings;
+		SoundVolume = PlayerPrefs.GetFloat (SOUND_VOLUME, 1f);
+		MusicVolume = PlayerPrefs.GetFloat (MUSIC_VOLUME, 1f);;
+		ShowHint = PlayerPrefs.GetInt (HINT_TOGGLE, 0) == 1;
 	}
 }

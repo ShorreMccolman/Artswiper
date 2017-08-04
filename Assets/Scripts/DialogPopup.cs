@@ -13,7 +13,7 @@ public class DialogPopup : Menu {
 
 	public static void ShowDialog(string title, string message)
 	{
-		MenuController.Instance.OpenMenu (Instance, false);
+		MenuController.OpenMenu (Instance, false);
 		foreach(Text titleLabel in Instance.titleLabels)
 			titleLabel.text = title;
 		Instance.dialogLabel.text = message;
@@ -29,6 +29,6 @@ public class DialogPopup : Menu {
 	}
 
 	public void ClosePopup() {
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 }

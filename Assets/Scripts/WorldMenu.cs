@@ -10,12 +10,12 @@ public class WorldMenu : Menu {
 	public void SelectWorld(World world)
 	{
 		LevelMenu.Instance.currentWorld = world;
-		MenuController.Instance.CloseCurrent ();
-		MenuController.Instance.OpenMenu (LevelMenu.Instance);
+		MenuController.CloseCurrent ();
+		MenuController.OpenMenu (LevelMenu.Instance);
 	}
 
 	public void GoBack()
 	{
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 }

@@ -56,7 +56,7 @@ public class HUD : MonoBehaviour {
 					if(tick == 0) {
 						
 					} else {
-						SoundController.Instance.PlaySoundEffect (Sounds.TICK);
+						SoundController.PlaySoundEffect (Sounds.TICK);
 					}
 					tick--;
 				}
@@ -86,7 +86,7 @@ public class HUD : MonoBehaviour {
 
 	public void OpenSettingsPopup()
 	{
-		MenuController.Instance.OpenMenu (SettingsPopup.Instance, false);
+		MenuController.OpenMenu (SettingsPopup.Instance, false);
 	}
 
 	public void OpenAboutPopup()

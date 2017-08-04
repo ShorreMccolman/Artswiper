@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsPopup : Menu {
-
 	public static SettingsPopup Instance;
 	void Awake()
 	{Instance = this; base.Awake ();}
@@ -15,52 +14,39 @@ public class SettingsPopup : Menu {
 
 	public Text hintCheckmark;
 
-	float soundVolume;
-	float musicVolume;
-	bool showingHint;
-
 	protected override void OnOpen()
 	{
-		soundVolume = AppManager.settings.soundVolume;
-		musicVolume = AppManager.settings.musicVolume;
-
-		gameVolSlider.value = soundVolume;
-		musicVolSlider.value = musicVolume;
-
-		showingHint = AppManager.settings.showHint;
-		hintCheckmark.enabled = showingHint;
+		gameVolSlider.value = GameSettings.SoundVolume;
+		musicVolSlider.value = GameSettings.MusicVolume;
+		hintCheckmark.enabled = GameSettings.ShowHint;
 
 		quitButton.SetActive (GameController.Instance.currentState.currentMode != GameMode.None);
 	}
 
-	protected override void OnClose()
-	{
-		GameSettings.SaveSettings (AppManager.settings);
+	protected override void OnClose() {
+		GameSettings.SaveSettings ();
 	}
 
 	public void AdjustGameVol(float val) {
-		SoundController.Instance.SetGameVolume (val);
-		soundVolume = val;
+		SoundController.ChangeSoundVolume (val);
 	}
 
 	public void AdjustMusicVol(float val) {
-		SoundController.Instance.SetMusicVolume (val);
-		musicVolume = val;
+		SoundController.ChangeMusicVolume (val);
 	}
 
 	public void ToggleHint()
 	{
-		showingHint = !showingHint;
-		hintCheckmark.enabled = showingHint;
-		AppManager.settings.showHint = showingHint;
+		GameSettings.ShowHint = !GameSettings.ShowHint;
+		hintCheckmark.enabled = GameSettings.ShowHint;
 	}
 
 	public void QuitToMain() {
 		HUD.Instance.running = false;
-		MenuController.Instance.OpenMenu (MainMenu.Instance);
+		MenuController.OpenMenu (MainMenu.Instance);
 	}
 
 	public void ClosePopup() {
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 }

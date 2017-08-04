@@ -9,6 +9,6 @@ public class AboutPopup : Menu {
 
 	public void ClosePopup()
 	{
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 }

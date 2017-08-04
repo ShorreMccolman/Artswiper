@@ -4,6 +4,9 @@
 /[Bb]uild/
 /[Bb]uilds/
 /Assets/AssetStoreTools*
+/Assets/Universal Sound*
+/Assets/Mobile Game*
+/Assets/FullTilt*
 
 # Visual Studio 2015 cache directory
 /.vs/

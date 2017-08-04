@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class GenericMenuButton : MonoBehaviour {
 
-	public Vector3 onHoverScale = new Vector3(1.1f,1.1f,1.0f);
+	[SerializeField]
+	private Vector3 onHoverScale = new Vector3(1.1f,1.1f,1.0f);
 	Vector3 targetScale = Vector3.one;
 
 	[HideInInspector]public bool isActive = true;
@@ -18,7 +19,7 @@ public class GenericMenuButton : MonoBehaviour {
 
 	public void OnMouseOver()
 	{
-		SoundController.Instance.PlaySoundEffect (Sounds.HOVER,true);
+		SoundController.PlaySoundEffect (Sounds.HOVER,true);
 		targetScale = onHoverScale;
 	}
 	public void OffMouseOver()
@@ -28,7 +29,7 @@ public class GenericMenuButton : MonoBehaviour {
 
 	public void OnMouseClick()
 	{
-		SoundController.Instance.PlaySoundEffect (Sounds.CLICK, true);
+		SoundController.PlaySoundEffect (Sounds.CLICK, true);
 	}
 
 	void Update()

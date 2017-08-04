@@ -14,27 +14,27 @@ public class MainMenu : Menu {
 
 	public void StartClassic()
 	{
-		MenuController.Instance.OpenMenu (DifficultyPopup.Instance, false);
+		MenuController.OpenMenu (DifficultyPopup.Instance, false);
 	}
 
 	public void StartAdventure()
 	{
-		MenuController.Instance.OpenMenu (WorldMenu.Instance, false);
+		MenuController.OpenMenu (WorldMenu.Instance, false);
 	}
 
 	public void OpenStash()
 	{
-		MenuController.Instance.OpenMenu (StashMenu.Instance);
+		MenuController.OpenMenu (StashMenu.Instance);
 	}
 
 	public void OpenSettingsPopup()
 	{
-		MenuController.Instance.OpenMenu (SettingsPopup.Instance, false);
+		MenuController.OpenMenu (SettingsPopup.Instance, false);
 	}
 
 	public void OpenAboutPopup()
 	{
-		MenuController.Instance.OpenMenu (AboutPopup.Instance, false);
+		MenuController.OpenMenu (AboutPopup.Instance, false);
 	}
 
 	public void QuitGame()

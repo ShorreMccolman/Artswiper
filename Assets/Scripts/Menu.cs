@@ -31,7 +31,7 @@ public class Menu : MonoBehaviour {
 		if (isPopup && shouldPop) {
 			transform.localScale = Vector3.zero;
 			targetScale = Vector3.one;
-			SoundController.Instance.PlaySoundEffect (Sounds.POP, true);
+			SoundController.PlaySoundEffect (Sounds.POP, true);
 		}
 
 		OnOpen ();

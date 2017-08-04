@@ -32,7 +32,7 @@ public class EndgamePopup : Menu {
 
 		ribbon.SetActive (false);
 
-		SoundController.Instance.PauseMusic (3.0f);
+		SoundController.PauseMusic (3.0f);
 
 		switch(state.currentMode) {
 		case GameMode.Adventure:
@@ -64,14 +64,14 @@ public class EndgamePopup : Menu {
 				} else {
 					actionButton.transform.GetChild (0).GetComponent<Text> ().text = "NEXT LEVEL";
 				}
-				SoundController.Instance.PlaySoundEffect (Sounds.VICTORY);
+				SoundController.PlaySoundEffect (Sounds.VICTORY);
 
 				if(points >= board.map.pointTarget) {
 					Invoke ("TargetReached", 2.5f);
 				}
 			} else {
 				actionButton.SetActive (false);
-				SoundController.Instance.PlaySoundEffect (Sounds.DEFEAT);
+				SoundController.PlaySoundEffect (Sounds.DEFEAT);
 			}
 
 			break;
@@ -91,7 +91,7 @@ public class EndgamePopup : Menu {
 			label4.text = "Mines Remaining";
 			value4.text = state.remainingBombs.ToString();
 
-			SoundController.Instance.PlaySoundEffect (state.victory ? Sounds.VICTORY : Sounds.DEFEAT);
+			SoundController.PlaySoundEffect (state.victory ? Sounds.VICTORY : Sounds.DEFEAT);
 
 			if(state.victory)
 				PlayerProgression.CompleteClassicMode (GameController.Instance.currentBoard.map.name, HUD.Instance.finalTime);
@@ -104,7 +104,7 @@ public class EndgamePopup : Menu {
 
 	public void Retry()
 	{
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 		GameController.Instance.RestartCurrentBoard ();
 	}
 
@@ -115,8 +115,8 @@ public class EndgamePopup : Menu {
 			ChangeDifficulty ();
 		} else if (state.currentMode == GameMode.Adventure) {
 			if (GameController.Instance.IsFinalLevel ()) {
-				MenuController.Instance.OpenMenu (MainMenu.Instance);
-				MenuController.Instance.OpenMenu (WorldMenu.Instance);
+				MenuController.OpenMenu (MainMenu.Instance);
+				MenuController.OpenMenu (WorldMenu.Instance);
 			} else {
 				StartNextLevel ();
 			}
@@ -135,16 +135,16 @@ public class EndgamePopup : Menu {
 
 	public void ChangeDifficulty()
 	{
-		MenuController.Instance.OpenMenu (DifficultyPopup.Instance);
+		MenuController.OpenMenu (DifficultyPopup.Instance);
 	}
 
 	public void QuitToMenu()
 	{
-		MenuController.Instance.OpenMenu (MainMenu.Instance);
+		MenuController.OpenMenu (MainMenu.Instance);
 	}
 
 	public void ClosePopup()
 	{
-		MenuController.Instance.CloseCurrent ();
+		MenuController.CloseCurrent ();
 	}
 }

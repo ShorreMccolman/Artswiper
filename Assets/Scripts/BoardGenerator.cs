@@ -7,36 +7,41 @@ public class BoardGenerator : MonoBehaviour {
 	void Awake()
 	{Instance = this;}
 
-	public string ID;
+	[SerializeField]
+	private Transform anchor;
 
-	public Transform anchor;
-	public int xSize;
-	public int ySize;
-
-	public int difficulty;
-
-	Map currentMap;
-	Slot[] slots = new Slot[]{};
-	Dictionary<int,List<Slot>> blockDict = new Dictionary<int, List<Slot>>();
-
-	public List<GameObject> lights = new List<GameObject>();
-
-	public Map LoadMap(string mapID = "")
+	private Map currentMap;
+	public Map CurrentMap
 	{
-		return Resources.Load ("Maps/" + mapID) as Map;
+		get{
+			return currentMap;
+		}
+		private set{
+			if (value == null)
+				Debug.LogError ("Current map was set to null");
+
+			currentMap = value;
+		}
 	}
 
+	Slot[] slots = new Slot[]{};
+	Dictionary<int,List<Slot>> blockDict = new Dictionary<int, List<Slot>>();
+	List<GameObject> activeLights = new List<GameObject>();
 
+#if UNITY_EDITOR
 	void Update()
 	{
+		// Auto win
 		if (Input.GetKeyDown (KeyCode.W)) {
 			HUD.Instance.running = false;
 			GameController.Instance.currentState.victory = true;
 			BoardGenerator.Instance.FlipBoard ();
-			MenuController.Instance.OpenMenu (EndgamePopup.Instance);
+			MenuController.OpenMenu (EndgamePopup.Instance);
 		}
 	}
-		
+#endif
+
+	// This is used when time runs out or when we have cleared all of the safe spaces and want to reveal the board
 	public void FlipBoard()
 	{
 		for(int i=0;i<slots.Length;i++) {
@@ -44,38 +49,38 @@ public class BoardGenerator : MonoBehaviour {
 		}
 	}
 
+	// When we flip an empty slot we also want to flip over each adject slot
+	// isEnd forces the adjacent block to act as an empty slot to flip the entire board
 	public void FlipEmptySlot(int index, bool isEnd)
 	{
-		for(int i=0;i<slots.Length;i++) {
-
-			int pos = index;
-			if( pos % xSize != 0) {
-				slots [pos - 1].TryFlip (isEnd);
-			}
-			if(pos % xSize != (xSize - 1)) {
-				slots [pos + 1].TryFlip (isEnd);
-			}
-			if(pos / xSize != 0) {
-				slots [pos - xSize].TryFlip (isEnd);
-			}
-			if(pos / xSize != (ySize - 1)) {
-				slots [pos + xSize].TryFlip (isEnd);
-			}
-			if( pos % xSize != 0 && pos / xSize != 0) {
-				slots [pos - (xSize + 1)].TryFlip (isEnd);
-			}
-			if( pos % xSize != 0 && pos / xSize != (ySize - 1)) {
-				slots [pos + (xSize - 1)].TryFlip (isEnd);
-			}
-			if( pos % xSize != (xSize - 1) && pos / xSize != 0) {
-				slots [pos - (xSize - 1)].TryFlip (isEnd);
-			}
-			if( pos % xSize != (xSize - 1) && pos / xSize != (ySize - 1)) {
-				slots [pos + (xSize + 1)].TryFlip (isEnd);
-			}
+		if( index % CurrentMap.width != 0) {
+			slots [index - 1].TryFlip (isEnd);
+		}
+		if(index % CurrentMap.width != (CurrentMap.width - 1)) {
+			slots [index + 1].TryFlip (isEnd);
+		}
+		if(index / CurrentMap.width != 0) {
+			slots [index - CurrentMap.width].TryFlip (isEnd);
+		}
+		if(index / CurrentMap.width != (CurrentMap.height - 1)) {
+			slots [index + CurrentMap.width].TryFlip (isEnd);
+		}
+		if( index % CurrentMap.width != 0 && index / CurrentMap.width != 0) {
+			slots [index - (CurrentMap.width + 1)].TryFlip (isEnd);
+		}
+		if( index % CurrentMap.width != 0 && index / CurrentMap.width != (CurrentMap.height - 1)) {
+			slots [index + (CurrentMap.width - 1)].TryFlip (isEnd);
+		}
+		if( index % CurrentMap.width != (CurrentMap.width - 1) && index / CurrentMap.width != 0) {
+			slots [index - (CurrentMap.width - 1)].TryFlip (isEnd);
+		}
+		if( index % CurrentMap.width != (CurrentMap.width - 1) && index / CurrentMap.width != (CurrentMap.height - 1)) {
+			slots [index + (CurrentMap.width + 1)].TryFlip (isEnd);
 		}
 	}
 
+
+	// This used to be used to flip an entire white block at a time. No longer used
 	public void FlipBlock(int index)
 	{
 		List<Slot> list = blockDict [index];
@@ -83,33 +88,34 @@ public class BoardGenerator : MonoBehaviour {
 			list [i].Flip ();
 
 			int pos = list [i].position;
-			if( pos % xSize != 0) {
+			if( pos % CurrentMap.width != 0) {
 				slots [pos - 1].Flip ();
 			}
-			if(pos % xSize != (xSize - 1)) {
+			if(pos % CurrentMap.width != (CurrentMap.width - 1)) {
 				slots [pos + 1].Flip ();
 			}
-			if(pos / xSize != 0) {
-				slots [pos - xSize].Flip ();
+			if(pos / CurrentMap.width != 0) {
+				slots [pos - CurrentMap.width].Flip ();
 			}
-			if(pos / xSize != (ySize - 1)) {
-				slots [pos + xSize].Flip ();
+			if(pos / CurrentMap.width != (CurrentMap.height - 1)) {
+				slots [pos + CurrentMap.width].Flip ();
 			}
-			if( pos % xSize != 0 && pos / xSize != 0) {
-				slots [pos - (xSize + 1)].Flip ();
+			if( pos % CurrentMap.width != 0 && pos / CurrentMap.width != 0) {
+				slots [pos - (CurrentMap.width + 1)].Flip ();
 			}
-			if( pos % xSize != 0 && pos / xSize != (ySize - 1)) {
-				slots [pos + (xSize - 1)].Flip ();
+			if( pos % CurrentMap.width != 0 && pos / CurrentMap.width != (CurrentMap.height - 1)) {
+				slots [pos + (CurrentMap.width - 1)].Flip ();
 			}
-			if( pos % xSize != (xSize - 1) && pos / xSize != 0) {
-				slots [pos - (xSize - 1)].Flip ();
+			if( pos % CurrentMap.width != (CurrentMap.width - 1) && pos / CurrentMap.width != 0) {
+				slots [pos - (CurrentMap.width - 1)].Flip ();
 			}
-			if( pos % xSize != (xSize - 1) && pos / xSize != (ySize - 1)) {
-				slots [pos + (xSize + 1)].Flip ();
+			if( pos % CurrentMap.width != (CurrentMap.width - 1) && pos / CurrentMap.width != (CurrentMap.height - 1)) {
+				slots [pos + (CurrentMap.width + 1)].Flip ();
 			}
 		}
 	}
 
+	// Clean up the board to create a new one.
 	public void WipeBoard()
 	{
 		if (slots == null)
@@ -119,12 +125,13 @@ public class BoardGenerator : MonoBehaviour {
 			SlotPool.Instance.ReturnSlot (slots [i]);
 		}
 
-		for(int i=0;i<lights.Count;i++) {
-			Destroy (lights [i].gameObject);
+		for(int i=0;i<activeLights.Count;i++) {
+			Destroy (activeLights [i].gameObject);
 		}
-		lights = new List<GameObject> ();
+		activeLights = new List<GameObject> ();
 	}
 
+	// Actually create the board
 	public Board CreateBoardFromMap(Map map)
 	{
 		WipeBoard ();
@@ -132,10 +139,6 @@ public class BoardGenerator : MonoBehaviour {
 		int lastX = map.width - 1;
 		int lastY = map.height - 1;
 
-		xSize = map.width;
-		ySize = map.height;
-		difficulty = map.difficulty;
-		ID = string.IsNullOrEmpty(map.name) ? "default" : map.name;
 		currentMap = map;
 
 		List<int> sections = new List<int> ();
@@ -177,7 +180,7 @@ public class BoardGenerator : MonoBehaviour {
 			break;
 		}
 
-		Sprite sprite = Resources.Load<Sprite> ("Features/" + ID);
+		Sprite sprite = Resources.Load<Sprite> ("Features/" + CurrentMap.name);
 		if(sprite == null)
 			sprite = Resources.Load<Sprite> ("Features/default");
 		HUD.Instance.feature.sprite = sprite;
@@ -207,7 +210,7 @@ public class BoardGenerator : MonoBehaviour {
 
 			slot.transform.parent = anchor;
 			slot.transform.localScale = Vector3.one;
-			slot.transform.localPosition = new Vector3 (slot.x * resVector.z - ((xSize - 1) * resVector.z * 0.5f), -slot.y * resVector.z + ((ySize - 1) * resVector.z * 0.5f), 0);
+			slot.transform.localPosition = new Vector3 (slot.x * resVector.z - ((CurrentMap.width - 1) * resVector.z * 0.5f), -slot.y * resVector.z + ((CurrentMap.height - 1) * resVector.z * 0.5f), 0);
 			switch(map.size) {
 			case MapSize._9x6:
 				((RectTransform)slot.transform).sizeDelta = Vector2.one * 70f;
@@ -267,28 +270,28 @@ public class BoardGenerator : MonoBehaviour {
 				}
 
 				if (slot.y != 0) {
-					if (slots [i - xSize].hasBomb)
+					if (slots [i - CurrentMap.width].hasBomb)
 						slot.nearby++;
 				}
 				if (slot.y != lastY) {
-					if (slots [i + xSize].hasBomb)
+					if (slots [i + CurrentMap.width].hasBomb)
 						slot.nearby++;
 				}
 
 				if (slot.x != 0 && slot.y != 0) {
-					if (slots [i - (xSize + 1)].hasBomb)
+					if (slots [i - (CurrentMap.width + 1)].hasBomb)
 						slot.nearby++;
 				}
 				if (slot.x != 0 && slot.y != lastY) {
-					if (slots [i + (xSize - 1)].hasBomb)
+					if (slots [i + (CurrentMap.width - 1)].hasBomb)
 						slot.nearby++;
 				}
 				if (slot.x != lastX && slot.y != 0) {
-					if (slots [i - (xSize - 1)].hasBomb)
+					if (slots [i - (CurrentMap.width - 1)].hasBomb)
 						slot.nearby++;
 				}
 				if (slot.x != lastX && slot.y != lastY) {
-					if (slots [i + (xSize + 1)].hasBomb)
+					if (slots [i + (CurrentMap.width + 1)].hasBomb)
 						slot.nearby++;
 				}
 			}
@@ -309,27 +312,27 @@ public class BoardGenerator : MonoBehaviour {
 				slots [i].index = index;
 				list.Add (slots [i]);
 
-				if (i / xSize != 0) {
-					int aboveIndex = slots [i - xSize].index;
-					if (slots [i - xSize].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
+				if (i / CurrentMap.width != 0) {
+					int aboveIndex = slots [i - CurrentMap.width].index;
+					if (slots [i - CurrentMap.width].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
 						changes.Add (aboveIndex);
 					}
 
-					if (i % xSize != 0) {
-						aboveIndex = slots [i - xSize - 1].index;
-						if (slots [i - xSize - 1].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
+					if (i % CurrentMap.width != 0) {
+						aboveIndex = slots [i - CurrentMap.width - 1].index;
+						if (slots [i - CurrentMap.width - 1].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
 							changes.Add (aboveIndex);
 						}
 					}
-					if (i % xSize != xSize - 1) {
-						aboveIndex = slots [i - xSize + 1].index;
-						if (slots [i - xSize + 1].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
+					if (i % CurrentMap.width != CurrentMap.width - 1) {
+						aboveIndex = slots [i - CurrentMap.width + 1].index;
+						if (slots [i - CurrentMap.width + 1].IsEmpty && aboveIndex != index && !changes.Contains (aboveIndex)) {
 							changes.Add (aboveIndex);
 						}
 					}
 				}
 
-				if (i % xSize == (xSize - 1) || !slots [i + 1].IsEmpty) {
+				if (i % CurrentMap.width == (CurrentMap.width - 1) || !slots [i + 1].IsEmpty) {
 					foreach (int dex in changes) {
 						foreach (Slot slot in blockDict[dex]) {
 							slot.index = index;
@@ -347,7 +350,7 @@ public class BoardGenerator : MonoBehaviour {
 		}
 
 
-		if(AppManager.settings.showHint) {
+		if(GameSettings.ShowHint) {
 			int[] arr = new int[blockDict.Keys.Count];
 			blockDict.Keys.CopyTo (arr, 0);
 
@@ -380,10 +383,11 @@ public class BoardGenerator : MonoBehaviour {
 		Board board = new Board ();
 		board.map = currentMap;
 		board.slots = slots;
-		board.remainingSpaces = currentMap.trueSlots - difficulty;
+		board.remainingSpaces = CurrentMap.trueSlots - CurrentMap.difficulty;
 		return board;
 	}
 
+	// Wipe the current board and reload
 	public Board ReloadBoard()
 	{
 		if(currentMap != null) {
@@ -393,15 +397,10 @@ public class BoardGenerator : MonoBehaviour {
 		Debug.LogError ("Tried to reload null map");
 		return null;
 	}
-		
-	public Board CreateBoard()
+
+	// Add the alarm light gameobject to a list so we can destroy them all when we wipe the board
+	public void AddActiveLight(GameObject light)
 	{
-		Map map = new Map ();
-		map.width = xSize;
-		map.height = ySize;
-		map.difficulty = difficulty;
-		map.types = new SlotType[xSize * ySize];
-		map.sections = new int[xSize * ySize];
-		return CreateBoardFromMap (map);
+		activeLights.Add (light);
 	}
 }

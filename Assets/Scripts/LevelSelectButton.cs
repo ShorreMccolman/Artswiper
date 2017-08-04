@@ -59,7 +59,7 @@ public class LevelSelectButton : GenericMenuButton {
 		if (isUnlocked) {
 			LevelMenu.Instance.SelectLevel (levelMap);
 		} else {
-			MenuController.Instance.ShakeTransform(transform);
+			MenuController.ShakeTransform(transform);
 		}
 	}
 }

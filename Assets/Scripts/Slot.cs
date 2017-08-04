@@ -105,11 +105,11 @@ public class Slot : MonoBehaviour {
 
 	void Update()
 	{
-		if(active && cover.enabled && !AppManager.Instance.cover.enabled) {
+		if(active && cover.enabled && !AppManager.Instance.ScreenIsCovered) {
 			if (Input.GetMouseButtonUp (0) && !Input.GetKey(KeyCode.LeftControl)) {
 				bool didFlip = TryFlip ();
 				if(didFlip)
-					SoundController.Instance.PlaySoundEffect (Sounds.FLIP);
+					SoundController.PlaySoundEffect (Sounds.FLIP);
 			}
 
 			if (Input.GetMouseButtonUp (1) || ( Input.GetMouseButtonUp(0) && Input.GetKey(KeyCode.LeftControl) )) {
@@ -137,7 +137,7 @@ public class Slot : MonoBehaviour {
 			GameObject light = Instantiate (Resources.Load("Particles/Light" + size)) as GameObject;
 			light.transform.position = transform.position + Vector3.back * 10f;
 
-			BoardGenerator.Instance.lights.Add (light);
+			BoardGenerator.Instance.AddActiveLight (light);
 		}
 			
 		Invoke ("SendFlipEnd", 0.02f);
@@ -164,10 +164,10 @@ public class Slot : MonoBehaviour {
 			GameObject light = Instantiate (Resources.Load("Particles/Light" + size)) as GameObject;
 			light.transform.position = transform.position + Vector3.back * 10f;
 
-			BoardGenerator.Instance.lights.Add (light);
+			BoardGenerator.Instance.AddActiveLight (light);
 
 			PlayerProgression.TriggerBomb ();
-			SoundController.Instance.PlaySoundEffect (Sounds.HIT,true);
+			SoundController.PlaySoundEffect (Sounds.HIT,true);
 
 			image.color = Color.magenta;
 			GameController.Instance.HitBomb ();
@@ -204,7 +204,7 @@ public class Slot : MonoBehaviour {
 			state = State.Flagged;
 			cover.sprite = SlotPool.Instance.FlagSprite;
 			GameController.Instance.FlagSpace (true, hasBomb);
-			SoundController.Instance.PlaySoundEffect (Sounds.FLAG);
+			SoundController.PlaySoundEffect (Sounds.FLAG);
 
 		} else if (state == State.Flagged) {
 			state = State.Hidden;
